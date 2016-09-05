@@ -89,7 +89,7 @@ Token *readNumber(void) {
     char number[100];
     int count = 0;
     int cl = colNo,
-    ln = lineNo;
+            ln = lineNo;
     while (charCodes[currentChar] == CHAR_DIGIT) {
         number[count] = currentChar;
         count++;
@@ -109,10 +109,17 @@ Token *readNumber(void) {
 
 Token *readConstChar(void) {
     Token *token;
-    token = makeToken(TK_CHAR, lineNo, colNo);
+    token = makeToken(TK_CHAR, lineNo, colNo - 1);
+    token->string[0] = currentChar;
+    token->string[1] = '\0';
+
     readChar();
-    if (charCodes[currentChar] == CHAR_SEMICOLON)
+
+    if (charCodes[currentChar] == CHAR_SINGLEQUOTE) {
+        readChar();
         return token;
+    }
+
 
     error(ERR_INVALIDCHARCONSTANT, lineNo, colNo);
 }
