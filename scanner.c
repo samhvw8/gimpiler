@@ -62,6 +62,23 @@ Token *readIdentKeyword(void) {
 
 Token *readNumber(void) {
     Token *token;
+    char number[100];
+    int count = 0;
+    while (charCodes[currentChar] == CHAR_DIGIT) {
+        number[count] = currentChar;
+        count++;
+        readChar();
+
+
+    }
+
+    number[count] = '\0';
+
+
+    token = makeToken(TK_NUMBER, lineNo, colNo);
+
+    token->value = atoi(number);
+    return token;
 }
 
 Token *readConstChar(void) {
