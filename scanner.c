@@ -31,7 +31,33 @@ void skipComment() {
 }
 
 Token *readIdentKeyword(void) {
+    Token *token;
+    char ident[MAX_IDENT_LEN + 1];
+    int count = 0;
+    while (charCodes[currentChar] == CHAR_LETTER || charCodes[currentChar] == CHAR_DIGIT) {
+        ident[count] = currentChar;
+        count++;
+        readChar();
 
+        if (count > MAX_IDENT_LEN + 1) {
+
+            token = makeToken(TK_NONE, lineNo, colNo);
+            error(ERM_IDENTTOOLONG, lineNo, colNo);
+            return token;
+        }
+    }
+
+    ident[count] = '\0';
+    TokenType tokenType = checkKeyword(ident);
+    if (tokenType == TK_NONE) {
+        token = makeToken(TK_NONE, lineNo, colNo);
+        return token;
+    }
+
+    token = makeToken(tokenType, lineNo, colNo);
+
+    strcpy(token->string, ident);
+    return token;
 }
 
 Token *readNumber(void) {
