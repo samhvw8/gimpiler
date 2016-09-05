@@ -40,6 +40,7 @@ void skipComment() {
     };
 
     if (charCodes[currentChar] == CHAR_RPAR && state == 4) {
+        readChar();
         return;
     }
 
@@ -102,7 +103,13 @@ Token *readNumber(void) {
 }
 
 Token *readConstChar(void) {
-    // TODO
+    Token *token;
+    token = makeToken(TK_CHAR, lineNo, colNo);
+    readChar();
+    if (charCodes[currentChar] == CHAR_SEMICOLON)
+        return token;
+
+    error(ERR_INVALIDCHARCONSTANT, lineNo, colNo);
 }
 
 Token *getToken(void) {
@@ -219,6 +226,7 @@ Token *getToken(void) {
                     return token;
             }
         case CHAR_SINGLEQUOTE: // 34
+            readChar();
             return readConstChar();
 
         default:
