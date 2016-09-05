@@ -27,7 +27,27 @@ void skipBlank() {
 }
 
 void skipComment() {
-    // TODO
+    int state = 3;
+
+    state3:
+    while (charCodes[currentChar] != CHAR_TIMES) {
+        readChar();
+    };
+    state = 4;
+
+    while (charCodes[currentChar] == CHAR_TIMES) {
+        readChar();
+    };
+
+    if (charCodes[currentChar] == CHAR_RPAR && state == 4) {
+        return;
+    }
+
+    if (currentChar == '\n' || currentChar == EOF) {
+        error(ERR_ENDOFCOMMENT, lineNo, colNo);
+    }
+
+    goto state3;
 }
 
 Token *readIdentKeyword(void) {
@@ -54,7 +74,7 @@ Token *readIdentKeyword(void) {
         return token;
     }
 
-    token = makeToken(tokenType, lineNo, colNo);
+    token = makeToken(tokenType, lineNo, colNo - count);
 
     strcpy(token->string, ident);
     return token;
