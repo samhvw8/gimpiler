@@ -44,7 +44,7 @@ void skipComment() {
         return;
     }
 
-    if (currentChar == '\n' || currentChar == EOF) {
+    if (currentChar == EOF) {
         error(ERR_ENDOFCOMMENT, lineNo, colNo);
     }
 
