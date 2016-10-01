@@ -113,7 +113,7 @@ void compileVarDecls(void) {
 
 void compileVarDecl(void) {
     eat(TK_IDENT);
-    eat(SB_EQ);
+    eat(SB_COLON);
     compileType();
     eat(SB_SEMICOLON);
 }
@@ -121,15 +121,12 @@ void compileVarDecl(void) {
 void compileSubDecls(void) {
     assert("Parsing subtoutines ....");
 
-
-    while (lookAhead->tokenType == KW_FUNCTION) {
-        compileFuncDecl();
-        compileSubDecls();
-    }
-
-    while (lookAhead->tokenType == KW_PROCEDURE) {
-        compileProcDecl();
-        compileSubDecls();
+    while (lookAhead->tokenType == KW_FUNCTION || lookAhead->tokenType == KW_PROCEDURE) {
+        if (lookAhead->tokenType == KW_FUNCTION) {
+            compileFuncDecl();
+        } else {
+            compileProcDecl();
+        }
     }
 
     assert("Subtoutines parsed ....");
@@ -272,7 +269,6 @@ void compileParams2(void) {
             eat(SB_SEMICOLON);
             compileParam();
             compileParams2();
-            eat(SB_RPAR);
             break;
         case SB_RPAR:
             break;
@@ -402,7 +398,7 @@ void compileWhileSt(void) {
     compileCondition();
     eat(KW_DO);
     compileStatement();
-    assert("While statement pased ....");
+    assert("While statement parsed ....");
 }
 
 void compileForSt(void) {
