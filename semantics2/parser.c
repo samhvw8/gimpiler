@@ -38,10 +38,10 @@ void compileProgram(void) {
     eat(KW_PROGRAM);
     eat(TK_IDENT);
     obj = createProgramObject(currentToken->string);
+    enterBlock(obj->progAttrs->scope);
     eat(SB_SEMICOLON);
     compileBlock();
     eat(SB_PERIOD);
-    enterBlock(obj->progAttrs->scope);
 }
 
 void compileBlock(void) {
