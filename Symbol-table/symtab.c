@@ -150,7 +150,7 @@ Object *createConstantObject(char *name) {
 Object *createTypeObject(char *name) {
     Object *typeObj = (Object *) malloc(sizeof(Object));
     strcpy(typeObj->name, name);
-    typeObj->kind = OBJ_CONSTANT;
+    typeObj->kind = OBJ_TYPE;
     typeObj->typeAttrs = (TypeAttributes *) malloc(sizeof(TypeAttributes));
     return typeObj;
 }
@@ -158,7 +158,7 @@ Object *createTypeObject(char *name) {
 Object *createVariableObject(char *name) {
     Object *varObj = (Object *) malloc(sizeof(Object));
     strcpy(varObj->name, name);
-    varObj->kind = OBJ_CONSTANT;
+    varObj->kind = OBJ_VARIABLE;
     varObj->varAttrs = (VariableAttributes *) malloc(sizeof(VariableAttributes));
     varObj->varAttrs->scope = symtab->currentScope;
     return varObj;
@@ -187,6 +187,7 @@ Object *createProcedureObject(char *name) {
 Object *createParameterObject(char *name, enum ParamKind kind, Object *owner) {
     Object *parameterObj = (Object *) malloc(sizeof(Object));
     strcpy(parameterObj->name, name);
+    parameterObj->kind = OBJ_PARAMETER;
     parameterObj->paramAttrs = (ParameterAttributes *) malloc(sizeof(ParameterAttributes));
     parameterObj->paramAttrs->kind = kind;
     parameterObj->paramAttrs->function = owner;
