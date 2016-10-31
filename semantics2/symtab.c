@@ -317,7 +317,7 @@ void exitBlock(void) {
 }
 
 Object *lookupObject(char *name) {
-    // TODO
+    return findObject(symtab->globalObjectList, name);
 }
 
 void declareObject(Object *obj) {
