@@ -44,29 +44,71 @@ Type *makeArrayType(int arraySize, Type *elementType) {
 }
 
 Type *duplicateType(Type *type) {
-
+    Type *ret = (Type *) malloc(sizeof(Type));
+    ret->arraySize = type->arraySize;
+    ret->elementType = type->elementType;
+    ret->typeClass = type->typeClass;
+    return ret;
 }
 
 int compareType(Type *type1, Type *type2) {
-    // TODO
+    // check type1 & type2 class equal ?
+    if(type1->typeClass != type2->typeClass) {
+        // not same type
+        return 0;
+    }
+
+    // check typeClass is not array
+    if(type1->typeClass != TP_ARRAY) {
+        // same type but not array
+        return  1;
+    }
+
+    // is array
+    // check array size
+    if(type1->arraySize != type2->arraySize) {
+        // not same size
+        return 0;
+    }
+
+    // compare recursive elementType
+    return compareType(type1->elementType, type2->elementType);
+
 }
 
+
 void freeType(Type *type) {
-    // TODO
+    //check if type is array
+    if(type->typeClass == TP_ARRAY) {
+        // freeType recursive elementType
+        freeType(type->elementType);
+    }
+
+    free(type);
 }
 
 /******************* Constant utility ******************************/
 
 ConstantValue *makeIntConstant(int i) {
-    // TODO
+    ConstantValue *ret = (ConstantValue *) malloc(sizeof(ConstantValue));
+    ret->type = TP_INT;
+    ret->intValue = i;
+    return  ret;
 }
 
 ConstantValue *makeCharConstant(char ch) {
-    // TODO
+    ConstantValue *ret = (ConstantValue *) malloc(sizeof(ConstantValue));
+    ret->type = TP_CHAR;
+    ret->intValue = ch;
+    return  ret;
 }
 
 ConstantValue *duplicateConstantValue(ConstantValue *v) {
-    // TODO
+    ConstantValue *ret = (ConstantValue *) malloc(sizeof(ConstantValue));
+    ret->type = v->type;
+    ret->intValue = v->intValue;
+    ret->charValue = v->charValue;
+    return  ret;
 }
 
 /******************* Object utilities ******************************/
