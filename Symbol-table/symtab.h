@@ -125,7 +125,7 @@ struct Scope_ {
     struct Scope_ *outer;
 };
 
-typedef struct Scope_ Scope;
+typedef struct Scope_  Scope;
 
 struct SymTab_ {
     Object *program;
