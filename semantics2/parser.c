@@ -19,7 +19,7 @@ Token *lookAhead;
 extern Type *intType;
 extern Type *charType;
 extern SymTab *symtab;
-extern Object *obj;
+Object *obj;
 
 void scan(void) {
     Token *tmp = currentToken;
