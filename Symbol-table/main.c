@@ -41,11 +41,10 @@ int main() {
     obj = createVariableObject("v2");
     obj->varAttrs->type = makeArrayType(10, makeArrayType(10, makeIntType()));
     declareObject(obj);
+    
     obj = createFunctionObject("f");
-
     obj->funcAttrs->returnType = makeIntType();
     declareObject(obj);
-
     enterBlock(obj->funcAttrs->scope);
 
     obj = createParameterObject("p1", PARAM_VALUE, symtab->currentScope->owner);

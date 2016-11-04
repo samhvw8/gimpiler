@@ -31,6 +31,7 @@ void scan(void) {
 void eat(TokenType tokenType) {
     if (lookAhead->tokenType == tokenType) {
         scan();
+        printToken(lookAhead);
     } else missingToken(tokenType, lookAhead->lineNo, lookAhead->colNo);
 }
 
@@ -42,6 +43,7 @@ void compileProgram(void) {
     eat(SB_SEMICOLON);
     compileBlock();
     eat(SB_PERIOD);
+    exitBlock();
 }
 
 void compileBlock(void) {
@@ -57,10 +59,10 @@ void compileBlock(void) {
             eat(SB_EQ);
 
             obj->constAttrs->value = compileConstant();
-
+            declareObject(obj);
             eat(SB_SEMICOLON);
 
-            declareObject(obj);
+
         } while (lookAhead->tokenType == TK_IDENT);
 
         compileBlock2();
@@ -79,10 +81,10 @@ void compileBlock2(void) {
             eat(SB_EQ);
 
             obj->typeAttrs->actualType = compileType();
-
+            declareObject(obj);
             eat(SB_SEMICOLON);
 
-            declareObject(obj);
+
         } while (lookAhead->tokenType == TK_IDENT);
 
         compileBlock3();
@@ -101,10 +103,10 @@ void compileBlock3(void) {
             eat(SB_COLON);
 
             obj->varAttrs->type = compileType();
-
+            declareObject(obj);
             eat(SB_SEMICOLON);
 
-            declareObject(obj);
+
         } while (lookAhead->tokenType == TK_IDENT);
 
         compileBlock4();
@@ -134,27 +136,36 @@ void compileFuncDecl(void) {
     eat(KW_FUNCTION);
     eat(TK_IDENT);
     obj = createFunctionObject(currentToken->string);
+    declareObject(obj);
+
+    enterBlock(obj->funcAttrs->scope);
     compileParams();
+
     eat(SB_COLON);
+    obj->funcAttrs->returnType = compileType();
     eat(SB_SEMICOLON);
+
     compileBlock();
     eat(SB_SEMICOLON);
-    declareObject(obj);
+    exitBlock();
 
 }
 
 void compileProcDecl(void) {
     eat(KW_PROCEDURE);
     eat(TK_IDENT);
-
     obj = createProcedureObject(currentToken->string);
+    declareObject(obj);
 
+    enterBlock(obj->procAttrs->scope);
     compileParams();
+
     eat(SB_SEMICOLON);
+
     compileBlock();
     eat(SB_SEMICOLON);
+    exitBlock();
 
-    declareObject(obj);
 }
 
 ConstantValue *compileUnsignedConstant(void) {
@@ -176,7 +187,7 @@ ConstantValue *compileUnsignedConstant(void) {
             break;
         case TK_CHAR:
             eat(TK_CHAR);
-            constValue = makeCharConstant(currentToken->value);
+            constValue = makeCharConstant(currentToken->string[0]);
             break;
         default:
             error(ERR_INVALID_CONSTANT, lookAhead->lineNo, lookAhead->colNo);
@@ -199,7 +210,7 @@ ConstantValue *compileConstant(void) {
             break;
         case TK_CHAR:
             eat(TK_CHAR);
-            constValue = makeCharConstant(currentToken->value);
+            constValue = makeCharConstant(currentToken->string[0]);
             break;
         default:
             constValue = compileConstant2();
@@ -313,7 +324,7 @@ void compileParam(void) {
         case KW_VAR:
             eat(KW_VAR);
             eat(TK_IDENT);
-            obj = createParameterObject(currentToken->string, PARAM_VALUE, symtab->currentScope->owner);
+            obj = createParameterObject(currentToken->string, PARAM_REFERENCE, symtab->currentScope->owner);
             eat(SB_COLON);
             obj->paramAttrs->type = compileBasicType();
             declareObject(obj);
