@@ -317,7 +317,17 @@ void exitBlock(void) {
 }
 
 Object *lookupObject(char *name) {
-    return findObject(symtab->globalObjectList, name);
+    Object *ret = NULL;
+
+    Scope *currScope = symtab->currentScope;
+    while (currScope != NULL) {
+        ret = findObject(currScope->objList, name);
+        if (ret)
+            return ret;
+        currScope = currScope->outer;
+    }
+
+    return NULL;
 }
 
 void declareObject(Object *obj) {

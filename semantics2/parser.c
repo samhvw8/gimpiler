@@ -31,7 +31,6 @@ void scan(void) {
 void eat(TokenType tokenType) {
     if (lookAhead->tokenType == tokenType) {
         scan();
-        printToken(lookAhead);
     } else missingToken(tokenType, lookAhead->lineNo, lookAhead->colNo);
 }
 
@@ -133,16 +132,21 @@ void compileSubDecls(void) {
 }
 
 void compileFuncDecl(void) {
+    Object *funcObj;
     eat(KW_FUNCTION);
     eat(TK_IDENT);
+
     obj = createFunctionObject(currentToken->string);
     declareObject(obj);
+
+    funcObj = obj;
 
     enterBlock(obj->funcAttrs->scope);
     compileParams();
 
     eat(SB_COLON);
-    obj->funcAttrs->returnType = compileType();
+    funcObj->funcAttrs->returnType = compileType();
+
     eat(SB_SEMICOLON);
 
     compileBlock();
@@ -152,6 +156,7 @@ void compileFuncDecl(void) {
 }
 
 void compileProcDecl(void) {
+
     eat(KW_PROCEDURE);
     eat(TK_IDENT);
     obj = createProcedureObject(currentToken->string);
@@ -179,7 +184,7 @@ ConstantValue *compileUnsignedConstant(void) {
         case TK_IDENT:
             eat(TK_IDENT);
 
-            Object *found = findObject(symtab->globalObjectList, currentToken->string);
+            Object *found = lookupObject(currentToken->string);
             if (found == NULL)
                 return NULL;
             constValue = duplicateConstantValue(found->constAttrs->value);
@@ -267,7 +272,7 @@ Type *compileType(void) {
         case TK_IDENT:
             eat(TK_IDENT);
 
-            Object *found = findObject(symtab->globalObjectList, currentToken->string);
+            Object *found = lookupObject(currentToken->string);
             if (found == NULL)
                 return NULL;
             type = duplicateType(found->typeAttrs->actualType);
