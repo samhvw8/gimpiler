@@ -236,9 +236,9 @@ ConstantValue *compileConstant(void) {
     switch (lookAhead->tokenType) {
         case SB_PLUS:
             eat(SB_PLUS);
+            constValue = compileConstant2();
             if (constValue->type != TP_INT)
                 error(ERR_UNDECLARED_INT_CONSTANT, currentToken->lineNo, currentToken->colNo);
-            constValue = compileConstant2();
             break;
         case SB_MINUS:
             eat(SB_MINUS);
