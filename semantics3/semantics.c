@@ -82,10 +82,13 @@ Object *checkDeclaredProcedure(char *name) {
 
 Object *checkDeclaredLValueIdent(char *name) {
     Object *valueObj = lookupObject(name);
-    if (!valueObj || valueObj->kind != OBJ_FUNCTION)
+    if (!valueObj)
+        error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+    if (valueObj->kind != OBJ_FUNCTION)
         if (valueObj->kind != OBJ_VARIABLE)
             if (valueObj->kind != OBJ_PARAMETER)
                 error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+
     return valueObj;
 }
 
