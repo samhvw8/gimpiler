@@ -60,7 +60,7 @@ void compileBlock(void) {
 
         do {
             eat(TK_IDENT);
-            checkDeclaredIdent(currentToken->string);
+            checkFreshIdent(currentToken->string);
 
             // Create a constant object
             constObj = createConstantObject(currentToken->string);
@@ -88,7 +88,7 @@ void compileBlock2(void) {
 
         do {
             eat(TK_IDENT);
-            checkDeclaredIdent(currentToken->string);
+            checkFreshIdent(currentToken->string);
 
             // create a type object
             typeObj = createTypeObject(currentToken->string);
@@ -116,7 +116,7 @@ void compileBlock3(void) {
 
         do {
             eat(TK_IDENT);
-            checkDeclaredIdent(currentToken->string);
+            checkFreshIdent(currentToken->string);
 
             // Create a variable object
             varObj = createVariableObject(currentToken->string);

@@ -24,56 +24,68 @@ Object *lookupObject(char *name) {
         currScope = currScope->outer;
     }
 
+    ret = findObject(symtab->globalObjectList, name);
+    if (ret)
+        return ret;
+
     return NULL;
 }
 
 void checkFreshIdent(char *name) {
-    Object *loopObj = lookupObject(name);
-    if(loopObj)
+    Object *loopObj = findObject(symtab->currentScope->objList, name);
+    if (loopObj)
         error(ERR_DUPLICATE_IDENT, currentToken->lineNo, currentToken->colNo);
 }
 
 Object *checkDeclaredIdent(char *name) {
     Object *found = lookupObject(name);
-    if(!found)
-        error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+    if (found)
+        return found;
+
+    error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
 }
 
 Object *checkDeclaredConstant(char *name) {
-    Object *constantObj = checkDeclaredIdent(name);
-    if (constantObj->kind != OBJ_CONSTANT)
+    Object *constantObj = lookupObject(name);
+    if (!constantObj || constantObj->kind != OBJ_CONSTANT)
         error(ERR_UNDECLARED_CONSTANT, currentToken->lineNo, currentToken->colNo);
+    return constantObj;
 }
 
 Object *checkDeclaredType(char *name) {
-    Object *typeObj = checkDeclaredIdent(name);
-    if (typeObj->kind != OBJ_TYPE)
+    Object *typeObj = lookupObject(name);
+    if (!typeObj || typeObj->kind != OBJ_TYPE)
         error(ERR_UNDECLARED_TYPE, currentToken->lineNo, currentToken->colNo);
+    return typeObj;
 }
 
 Object *checkDeclaredVariable(char *name) {
-    Object *varObj = checkDeclaredIdent(name);
-    if (varObj->kind != OBJ_VARIABLE)
+    Object *varObj = lookupObject(name);
+    if (!varObj || varObj->kind != OBJ_VARIABLE)
         error(ERR_UNDECLARED_VARIABLE, currentToken->lineNo, currentToken->colNo);
+    return varObj;
 }
 
 Object *checkDeclaredFunction(char *name) {
-    Object *funcObj = checkDeclaredIdent(name);
-    if (funcObj->kind != OBJ_FUNCTION)
+    Object *funcObj = lookupObject(name);
+    if (!funcObj || funcObj->kind != OBJ_FUNCTION)
         error(ERR_UNDECLARED_FUNCTION, currentToken->lineNo, currentToken->colNo);
+    return funcObj;
 }
 
 Object *checkDeclaredProcedure(char *name) {
-    Object *procObj = checkDeclaredIdent(name);
-    if (procObj->kind != OBJ_PROCEDURE)
+    Object *procObj = lookupObject(name);
+    if (!procObj || procObj->kind != OBJ_PROCEDURE)
         error(ERR_UNDECLARED_PROCEDURE, currentToken->lineNo, currentToken->colNo);
+    return procObj;
 }
 
 Object *checkDeclaredLValueIdent(char *name) {
-    Object *valueObj = checkDeclaredIdent(name);
-    if (valueObj->kind != OBJ_FUNCTION)
+    Object *valueObj = lookupObject(name);
+    if (!valueObj || valueObj->kind != OBJ_FUNCTION)
         if (valueObj->kind != OBJ_VARIABLE)
             if (valueObj->kind != OBJ_PARAMETER)
                 error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+    return valueObj;
 }
 
