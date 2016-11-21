@@ -425,7 +425,13 @@ void compileLValue(void) {
     // check if the identifier is a function identifier, or a variable identifier, or a parameter
     var = checkDeclaredLValueIdent(currentToken->string);
     if (var->kind == OBJ_VARIABLE)
-        compileIndexes();
+        if (var->varAttrs->type->typeClass == TP_ARRAY)
+            compileIndexes();
+        // TODO check owner scope
+
+    // TODO check function
+
+    // TODO check parameter
 }
 
 void compileAssignSt(void) {
@@ -671,7 +677,8 @@ void compileFactor(void) {
                 case OBJ_CONSTANT:
                     break;
                 case OBJ_VARIABLE:
-                    compileIndexes();
+                    if(obj->varAttrs->type->typeClass == TP_ARRAY)
+                        compileIndexes();
                     break;
                 case OBJ_PARAMETER:
                     break;
