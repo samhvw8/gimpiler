@@ -419,15 +419,18 @@ void compileStatement(void) {
 }
 
 void compileLValue(void) {
-    Object *var;
+    Object *lValueObj;
 
     eat(TK_IDENT);
     // check if the identifier is a function identifier, or a variable identifier, or a parameter
-    var = checkDeclaredLValueIdent(currentToken->string);
-    if (var->kind == OBJ_VARIABLE)
-        if (var->varAttrs->type->typeClass == TP_ARRAY)
+    lValueObj = checkDeclaredLValueIdent(currentToken->string);
+    if (lValueObj->kind == OBJ_VARIABLE)
+        if (lValueObj->varAttrs->type->typeClass == TP_ARRAY)
             compileIndexes();
-        // TODO check owner scope
+        ]
+
+    
+    // TODO check owner scope
 
     // TODO check function
 
@@ -677,7 +680,7 @@ void compileFactor(void) {
                 case OBJ_CONSTANT:
                     break;
                 case OBJ_VARIABLE:
-                    if(obj->varAttrs->type->typeClass == TP_ARRAY)
+                    if (obj->varAttrs->type->typeClass == TP_ARRAY)
                         compileIndexes();
                     break;
                 case OBJ_PARAMETER:
