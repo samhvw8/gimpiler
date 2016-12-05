@@ -12,6 +12,7 @@
 #include "semantics.h"
 #include "error.h"
 #include "debug.h"
+#include "token.h"
 
 Token *currentToken;
 Token *lookAhead;
@@ -501,7 +502,7 @@ void compileForSt(void) {
 }
 
 void compileArgument(Object *param) {
-    // TODO: !!!! / parse an argument, and check type consistency
+
     //       If the corresponding parameter is a reference, the argument must be a lvalue
     Type *type;
     if (param->kind == PARAM_REFERENCE) {
@@ -516,7 +517,7 @@ void compileArgument(Object *param) {
 }
 
 void compileArguments(ObjectNode *paramList) {
-    //TODO: !!!! /check the consistency of the arguments and the given parameters
+
     switch (lookAhead->tokenType) {
         case SB_LPAR:
             eat(SB_LPAR);
@@ -525,8 +526,17 @@ void compileArguments(ObjectNode *paramList) {
 
             while (lookAhead->tokenType == SB_COMMA) {
                 eat(SB_COMMA);
+                if (paramList == NULL) {
+                    //
+                    error(ERR_PARAMETERS_ARGUMENTS_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+                }
                 compileArgument(paramList->object);
                 paramList = paramList->next;
+            }
+
+            // missing params
+            if (paramList != NULL) {
+                error(ERR_INVALID_PARAMETER, currentToken->lineNo, currentToken->colNo);
             }
 
             eat(SB_RPAR);
