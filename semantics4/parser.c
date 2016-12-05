@@ -520,6 +520,11 @@ void compileArguments(ObjectNode *paramList) {
 
     switch (lookAhead->tokenType) {
         case SB_LPAR:
+
+            if (paramList == NULL) {
+                error(ERR_PARAMETERS_ARGUMENTS_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+            }
+
             eat(SB_LPAR);
             compileArgument(paramList->object);
             paramList = paramList->next;
