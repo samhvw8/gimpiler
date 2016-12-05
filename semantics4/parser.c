@@ -736,7 +736,7 @@ Type *compileFactor(void) {
                 case OBJ_VARIABLE:
 
                     if (obj->varAttrs->type->typeClass == TP_ARRAY) {
-                        return compileIndexes(obj->varAttrs->type->elementType);
+                        return compileIndexes(obj->varAttrs->type);
                     }
 
                     type = obj->varAttrs->type;
