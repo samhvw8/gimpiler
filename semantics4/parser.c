@@ -408,7 +408,6 @@ void compileStatement(void) {
 
 Type *compileLValue(void) {
     Object *var;
-    Type *varType;
 
     eat(TK_IDENT);
     // check if the identifier is a function identifier, or a variable identifier, or a parameter
@@ -416,24 +415,23 @@ Type *compileLValue(void) {
     if (var->kind == OBJ_VARIABLE) {
         if (var->varAttrs->type->typeClass == TP_ARRAY) {
             // Array element
-            return compileIndexes(var->varAttrs->type->elementType);
+            return compileIndexes(var->varAttrs->type);
         }
 
         // variable
-        varType = var->varAttrs->type;
+        return var->varAttrs->type;
     }
 
     if (var->kind == OBJ_FUNCTION) {
         // Function
-        varType = var->funcAttrs->returnType;
+        return var->funcAttrs->returnType;
     }
 
 
     // Param
-    varType = var->paramAttrs->type;
+    return var->paramAttrs->type;
 
 
-    return varType;
 }
 
 void compileAssignSt(void) {
@@ -709,18 +707,17 @@ void compileTerm2(void) {
 }
 
 Type *compileFactor(void) {
-    // TODO: ??? / parse a factor and return the factor's type
 
     Object *obj;
     Type *type;
 
     switch (lookAhead->tokenType) {
         case TK_NUMBER:
-            // todo ???
+            type = makeIntType();
             eat(TK_NUMBER);
             break;
         case TK_CHAR:
-            // todo ???
+            type = makeCharType();
             eat(TK_CHAR);
             break;
         case TK_IDENT:
@@ -730,7 +727,11 @@ Type *compileFactor(void) {
 
             switch (obj->kind) {
                 case OBJ_CONSTANT:
-                    // todo ???
+                    if (obj->constAttrs->value->type == TP_INT)
+                        type = makeIntType();
+                    else {
+                        type = makeCharType();
+                    }
                     break;
                 case OBJ_VARIABLE:
 
@@ -765,14 +766,15 @@ Type *compileFactor(void) {
 }
 
 Type *compileIndexes(Type *arrayType) {
-    // TODO: ????? / parse a sequence of indexes, check the consistency to the arrayType, and return the element type
-
 
     while (lookAhead->tokenType == SB_LSEL) {
+        checkArrayType(arrayType);
+        arrayType = arrayType->elementType;
         eat(SB_LSEL);
         Type *type = compileExpression();
         checkIntType(type);
         eat(SB_RSEL);
+
     }
 
     return arrayType;
