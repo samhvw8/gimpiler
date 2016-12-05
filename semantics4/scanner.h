@@ -9,8 +9,10 @@
 
 #include "token.h"
 
-Token* getToken(void);
-Token* getValidToken(void);
+Token *getToken(void);
+
+Token *getValidToken(void);
+
 void printToken(Token *token);
 
 #endif
